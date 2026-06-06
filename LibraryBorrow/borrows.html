@@ -1,781 +1,129 @@
 <!DOCTYPE html>
-
 <html lang="vi">
-
 <head>
-
-
-
-    <!-- Bộ mã tiếng Việt -->
-
     <meta charset="UTF-8">
-
-
-
-    <!-- Responsive -->
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
-    <!-- Tiêu đề trang -->
-
     <title>Library Borrow Management</title>
-
-
-
-    <!-- CSS -->
-
     <link rel="stylesheet" href="style.css">
-
-
-
 </head>
-
 <body>
-
-
-
-<!-- =====================================
-
-     KHUNG CHÍNH
-
-===================================== -->
-
-
 
 <div class="container">
 
+    <h1>LIBRARY BORROW MANAGEMENT</h1>
 
-
-    <!-- Tiêu đề -->
-
-    <h1>
-
-        QUẢN LÝ PHIẾU MƯỢN SÁCH
-
-    </h1>
-
-
-
-    <!-- =====================================
-
-         THỐNG KÊ
-
-    ===================================== -->
-
-
-
-    <div class="statistics">
-
-
-
-        <div class="stat-card">
-
-
-
-            <h3>Tổng phiếu</h3>
-
-
-
-            <p id="totalBorrows">
-
-                0
-
-            </p>
-
-
-
-        </div>
-
-
-
-        <div class="stat-card">
-
-
-
-            <h3>Đang mượn</h3>
-
-
-
-            <p id="borrowingCount">
-
-                0
-
-            </p>
-
-
-
-        </div>
-
-
-
-        <div class="stat-card">
-
-
-
-            <h3>Đã trả</h3>
-
-
-
-            <p id="returnedCount">
-
-                0
-
-            </p>
-
-
-
-        </div>
-
-
-
+    <div class="stats">
+        <div>Tổng phiếu: <span id="total">0</span></div>
+        <div>Đang mượn: <span id="borrowing">0</span></div>
+        <div>Đã trả: <span id="returned">0</span></div>
     </div>
 
+    <button class="btn-add" onclick="openForm()">
+        + THÊM PHIẾU MƯỢN
+    </button>
 
-
-    <!-- =====================================
-
-         NÚT THÊM
-
-    ===================================== -->
-
-
-
-    <div class="toolbar">
-
-
-
-        <button
-
-            class="btn-add"
-
-            onclick="openForm()">
-
-
-
-            + THÊM PHIẾU MƯỢN
-
-
-
-        </button>
-
-
-
-    </div>
-
-
-
-    <!-- =====================================
-
-         BẢNG DANH SÁCH
-
-    ===================================== -->
-
-
-
-    <div class="table-container">
-
-
-
-        <table>
-
-
-
-            <thead>
-
-
-
+    <table>
+        <thead>
             <tr>
-
-
-
                 <th>STT</th>
-
-
-
                 <th>Mã PM</th>
-
-
-
                 <th>Người Mượn</th>
-
-
-
                 <th>Mã Sách</th>
-
-
-
                 <th>Thể Loại</th>
-
-
-
                 <th>Ngày Mượn</th>
-
-
-
                 <th>Hạn Trả</th>
-
-
-
                 <th>Trạng Thái</th>
-
-
-
                 <th>Thao Tác</th>
-
-
-
             </tr>
+        </thead>
 
-
-
-            </thead>
-
-
-
-            <!-- JS render dữ liệu tại đây -->
-
-            <tbody id="borrowTable">
-
-
-
-            </tbody>
-
-
-
-        </table>
-
-
-
-    </div>
-
-
+        <tbody id="borrowTable"></tbody>
+    </table>
 
 </div>
 
+<!-- Modal -->
 
-
-<!-- =====================================
-
-     POPUP THÊM / SỬA
-
-===================================== -->
-
-
-
-<div
-
-    id="borrowModal"
-
-    class="modal">
-
-
+<div id="modal" class="modal">
 
     <div class="modal-content">
 
-
-
-        <!-- Tiêu đề popup -->
-
-        <h2>
-
-            Thêm / Sửa Phiếu Mượn
-
-        </h2>
-
-
-
-        <!-- Form -->
+        <h2>Phiếu Mượn Sách</h2>
 
         <form id="borrowForm">
 
-
-
-            <!-- ======================
-
-                 MÃ PHIẾU MƯỢN
-
-            ======================= -->
-
-
-
-            <label>
-
-                Mã Phiếu Mượn *
-
-            </label>
-
-
-
-            <input
-
-                type="text"
-
-                id="borrowId"
-
-                placeholder="PM-2048">
-
-
-
-            <small
-
-                class="error"
-
-                id="borrowIdError">
-
-            </small>
-
-
-
-            <!-- ======================
-
-                 HỌ TÊN
-
-            ======================= -->
-
-
-
-            <label>
-
-                Họ Tên Người Mượn *
-
-            </label>
-
-
-
-            <input
-
-                type="text"
-
-                id="borrowerName">
-
-
-
-            <small
-
-                class="error"
-
-                id="borrowerNameError">
-
-            </small>
-
-
-
-            <!-- ======================
-
-                 MÃ SÁCH
-
-            ======================= -->
-
-
-
-            <label>
-
-                Mã Sách *
-
-            </label>
-
-
-
-            <input
-
-                type="text"
-
-                id="bookId"
-
-                placeholder="BK10234">
-
-
-
-            <small
-
-                class="error"
-
-                id="bookIdError">
-
-            </small>
-
-
-
-            <!-- ======================
-
-                 THỂ LOẠI
-
-            ======================= -->
-
-
-
-            <label>
-
-                Thể Loại *
-
-            </label>
-
-
-
+            <label>Mã Phiếu Mượn</label>
+            <input type="text" id="borrowId">
+            <small id="borrowIdError" class="error"></small>
+
+            <label>Họ Tên Người Mượn</label>
+            <input type="text" id="borrowerName">
+            <small id="borrowerNameError" class="error"></small>
+
+            <label>Mã Sách</label>
+            <input type="text" id="bookId">
+            <small id="bookIdError" class="error"></small>
+
+            <label>Thể Loại</label>
             <select id="category">
-
-
-
-                <option value="">
-
-                    -- Chọn thể loại --
-
-                </option>
-
-
-
-                <option value="CNTT">
-
-                    CNTT
-
-                </option>
-
-
-
-                <option value="Kinh tế">
-
-                    Kinh tế
-
-                </option>
-
-
-
-                <option value="Ngoại ngữ">
-
-                    Ngoại ngữ
-
-                </option>
-
-
-
-                <option value="Kỹ năng">
-
-                    Kỹ năng
-
-                </option>
-
-
-
+                <option value="">--Chọn--</option>
+                <option>CNTT</option>
+                <option>Kinh tế</option>
+                <option>Ngoại ngữ</option>
+                <option>Kỹ năng</option>
             </select>
+            <small id="categoryError" class="error"></small>
 
+            <label>Ngày Mượn</label>
+            <input type="date" id="borrowDate">
+            <small id="borrowDateError" class="error"></small>
 
+            <label>Hạn Trả</label>
+            <input type="date" id="returnDate">
+            <small id="returnDateError" class="error"></small>
 
-            <small
+            <label>Số Điện Thoại</label>
+            <input type="text" id="phone">
+            <small id="phoneError" class="error"></small>
 
-                class="error"
+            <label>Email</label>
+            <input type="text" id="email">
+            <small id="emailError" class="error"></small>
 
-                id="categoryError">
-
-            </small>
-
-
-
-            <!-- ======================
-
-                 NGÀY MƯỢN
-
-            ======================= -->
-
-
-
-            <label>
-
-                Ngày Mượn *
-
-            </label>
-
-
-
-            <input
-
-                type="date"
-
-                id="borrowDate">
-
-
-
-            <small
-
-                class="error"
-
-                id="borrowDateError">
-
-            </small>
-
-
-
-            <!-- ======================
-
-                 HẠN TRẢ
-
-            ======================= -->
-
-
-
-            <label>
-
-                Hạn Trả *
-
-            </label>
-
-
-
-            <input
-
-                type="date"
-
-                id="returnDate">
-
-
-
-            <small
-
-                class="error"
-
-                id="returnDateError">
-
-            </small>
-
-
-
-            <!-- ======================
-
-                 SỐ ĐIỆN THOẠI
-
-            ======================= -->
-
-
-
-            <label>
-
-                Số Điện Thoại *
-
-            </label>
-
-
-
-            <input
-
-                type="text"
-
-                id="phone">
-
-
-
-            <small
-
-                class="error"
-
-                id="phoneError">
-
-            </small>
-
-
-
-            <!-- ======================
-
-                 EMAIL
-
-            ======================= -->
-
-
-
-            <label>
-
-                Email Liên Hệ *
-
-            </label>
-
-
-
-            <input
-
-                type="email"
-
-                id="email">
-
-
-
-            <small
-
-                class="error"
-
-                id="emailError">
-
-            </small>
-
-
-
-            <!-- ======================
-
-                 TRẠNG THÁI
-
-            ======================= -->
-
-
-
-            <label>
-
-                Trạng Thái *
-
-            </label>
-
-
-
+            <label>Trạng Thái</label>
             <select id="status">
-
-
-
-                <option value="">
-
-                    -- Chọn trạng thái --
-
-                </option>
-
-
-
-                <option value="Đang mượn">
-
-                    Đang mượn
-
-                </option>
-
-
-
-                <option value="Đã trả">
-
-                    Đã trả
-
-                </option>
-
-
-
+                <option value="">--Chọn--</option>
+                <option>Đang mượn</option>
+                <option>Đã trả</option>
             </select>
+            <small id="statusError" class="error"></small>
 
+            <label>Ghi Chú</label>
+            <textarea id="note"></textarea>
+            <small id="noteError" class="error"></small>
 
-
-            <small
-
-                class="error"
-
-                id="statusError">
-
-            </small>
-
-
-
-            <!-- ======================
-
-                 GHI CHÚ
-
-            ======================= -->
-
-
-
-            <label>
-
-                Ghi Chú
-
-            </label>
-
-
-
-            <textarea
-
-                id="note"
-
-                rows="4">
-
-            </textarea>
-
-
-
-            <small
-
-                class="error"
-
-                id="noteError">
-
-            </small>
-
-
-
-            <!-- ======================
-
-                 NÚT CHỨC NĂNG
-
-            ======================= -->
-
-
-
-            <div class="button-group">
-
-
-
-                <button
-
-                    type="submit"
-
-                    class="btn-save">
-
-
-
-                    LƯU
-
-
-
+            <div class="btn-group">
+                <button type="submit" class="save">
+                    Lưu
                 </button>
 
-
-
                 <button
-
                     type="button"
-
-                    class="btn-cancel"
-
+                    class="cancel"
                     onclick="closeForm()">
 
-
-
-                    HỦY
-
-
+                    Hủy
 
                 </button>
-
-
-
             </div>
-
-
 
         </form>
 
-
-
     </div>
-
-
 
 </div>
 
-
-
-<!-- =====================================
-
-     JAVASCRIPT
-
-===================================== -->
-
-
-
 <script src="script.js"></script>
 
-
-
 </body>
-
 </html>
