@@ -1,0 +1,467 @@
+/* =====================================
+   RESET CSS
+===================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+/* =====================================
+   BODY
+===================================== */
+
+body{
+
+    font-family:Arial, Helvetica, sans-serif;
+
+    background:#f3f4f6;
+
+    padding:20px;
+}
+
+/* =====================================
+   CONTAINER CHÍNH
+===================================== */
+
+.container{
+
+    max-width:1300px;
+
+    margin:auto;
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:12px;
+
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* =====================================
+   TIÊU ĐỀ
+===================================== */
+
+h1{
+
+    text-align:center;
+
+    color:#333;
+
+    margin-bottom:25px;
+}
+
+/* =====================================
+   THỐNG KÊ
+===================================== */
+
+.statistics{
+
+    display:flex;
+
+    gap:20px;
+
+    margin-bottom:25px;
+
+    flex-wrap:wrap;
+}
+
+.stat-card{
+
+    flex:1;
+
+    min-width:200px;
+
+    padding:20px;
+
+    text-align:center;
+
+    color:white;
+
+    border-radius:10px;
+}
+
+/* Tổng phiếu */
+
+.stat-card:nth-child(1){
+
+    background:#3498db;
+}
+
+/* Đang mượn */
+
+.stat-card:nth-child(2){
+
+    background:#f39c12;
+}
+
+/* Đã trả */
+
+.stat-card:nth-child(3){
+
+    background:#2ecc71;
+}
+
+.stat-card h3{
+
+    margin-bottom:10px;
+}
+
+.stat-card p{
+
+    font-size:30px;
+
+    font-weight:bold;
+}
+
+/* =====================================
+   THANH CÔNG CỤ
+===================================== */
+
+.toolbar{
+
+    margin-bottom:20px;
+}
+
+/* =====================================
+   NÚT THÊM
+===================================== */
+
+.btn-add{
+
+    background:#27ae60;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+.btn-add:hover{
+
+    background:#219150;
+}
+
+/* =====================================
+   BẢNG
+===================================== */
+
+.table-container{
+
+    overflow-x:auto;
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+}
+
+/* Header */
+
+thead{
+
+    background:#34495e;
+
+    color:white;
+}
+
+th{
+
+    padding:12px;
+
+    text-align:center;
+}
+
+/* Cell */
+
+td{
+
+    padding:12px;
+
+    text-align:center;
+
+    border-bottom:1px solid #ddd;
+}
+
+/* Hover dòng */
+
+tbody tr:hover{
+
+    background:#f8f9fa;
+}
+
+/* =====================================
+   NÚT SỬA
+===================================== */
+
+.btn-edit{
+
+    background:#3498db;
+
+    color:white;
+
+    border:none;
+
+    padding:8px 12px;
+
+    border-radius:5px;
+
+    cursor:pointer;
+
+    margin-right:5px;
+}
+
+.btn-edit:hover{
+
+    background:#2980b9;
+}
+
+/* =====================================
+   NÚT XÓA
+===================================== */
+
+.btn-delete{
+
+    background:#e74c3c;
+
+    color:white;
+
+    border:none;
+
+    padding:8px 12px;
+
+    border-radius:5px;
+
+    cursor:pointer;
+}
+
+.btn-delete:hover{
+
+    background:#c0392b;
+}
+
+/* =====================================
+   MODAL NỀN MỜ
+===================================== */
+
+.modal{
+
+    display:none;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.5);
+
+    overflow-y:auto;
+
+    z-index:1000;
+}
+
+/* =====================================
+   KHUNG POPUP
+===================================== */
+
+.modal-content{
+
+    background:white;
+
+    width:700px;
+
+    max-width:95%;
+
+    margin:30px auto;
+
+    padding:25px;
+
+    border-radius:12px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,0.2);
+}
+
+/* =====================================
+   TIÊU ĐỀ FORM
+===================================== */
+
+.modal-content h2{
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+    color:#333;
+}
+
+/* =====================================
+   LABEL
+===================================== */
+
+label{
+
+    display:block;
+
+    margin-top:12px;
+
+    margin-bottom:5px;
+
+    font-weight:bold;
+}
+
+/* =====================================
+   INPUT
+===================================== */
+
+input,
+select,
+textarea{
+
+    width:100%;
+
+    padding:10px;
+
+    border:1px solid #ccc;
+
+    border-radius:6px;
+
+    font-size:14px;
+}
+
+/* Focus */
+
+input:focus,
+select:focus,
+textarea:focus{
+
+    outline:none;
+
+    border-color:#3498db;
+}
+
+/* =====================================
+   THÔNG BÁO LỖI
+===================================== */
+
+.error{
+
+    color:red;
+
+    font-size:13px;
+
+    display:block;
+
+    margin-top:3px;
+
+    min-height:18px;
+}
+
+/* =====================================
+   NHÓM NÚT
+===================================== */
+
+.button-group{
+
+    margin-top:25px;
+
+    display:flex;
+
+    gap:15px;
+}
+
+/* =====================================
+   NÚT LƯU
+===================================== */
+
+.btn-save{
+
+    flex:1;
+
+    background:#27ae60;
+
+    color:white;
+
+    border:none;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:bold;
+}
+
+.btn-save:hover{
+
+    background:#219150;
+}
+
+/* =====================================
+   NÚT HỦY
+===================================== */
+
+.btn-cancel{
+
+    flex:1;
+
+    background:#e74c3c;
+
+    color:white;
+
+    border:none;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:bold;
+}
+
+.btn-cancel:hover{
+
+    background:#c0392b;
+}
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media(max-width:768px){
+
+    .statistics{
+
+        flex-direction:column;
+    }
+
+    .button-group{
+
+        flex-direction:column;
+    }
+
+    .modal-content{
+
+        width:95%;
+    }
+
+}
