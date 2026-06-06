@@ -1,834 +1,321 @@
-// =====================================
-// DỮ LIỆU MẪU + LOCAL STORAGE
-// =====================================
-
-// Dữ liệu mặc định nếu Local Storage chưa có dữ liệu
-
-const defaultBorrows = [
-
-    {
-        borrowId: "PM-2048",
-        borrowerName: "Nguyen Van A",
-        bookId: "BK10234",
-        category: "CNTT",
-        borrowDate: "2025-05-01",
-        returnDate: "2025-05-20",
-        phone: "0912345678",
-        email: "a@library.vn",
-        status: "Đang mượn",
-        note: "Muon giao trinh"
-    },
-
-    {
-        borrowId: "PM-2049",
-        borrowerName: "Tran Thi B",
-        bookId: "BK12345",
-        category: "Ngoại ngữ",
-        borrowDate: "2025-05-10",
-        returnDate: "2025-05-25",
-        phone: "0987654321",
-        email: "b@library.vn",
-        status: "Đã trả",
-        note: ""
-    }
-
-];
-
-// Đọc dữ liệu từ Local Storage
+// Dữ liệu mẫu
 
 let borrows =
-    JSON.parse(
-        localStorage.getItem("borrows")
-    ) || defaultBorrows;
-
-// Chỉ số bản ghi đang sửa
+JSON.parse(localStorage.getItem("borrows")) || [
+{
+    borrowId:"PM-2048",
+    borrowerName:"Nguyen Van A",
+    bookId:"BK10234",
+    category:"CNTT",
+    borrowDate:"2025-06-01",
+    returnDate:"2025-06-15",
+    phone:"0912345678",
+    email:"a@library.vn",
+    status:"Đang mượn",
+    note:""
+}
+];
 
 let editIndex = -1;
 
-// =====================================
-// KHỞI ĐỘNG TRANG
-// =====================================
+// Khởi động
 
-renderTable();
+render();
+updateStats();
 
-updateStatistics();
+// Mở form
 
-// =====================================
-// LƯU LOCAL STORAGE
-// =====================================
+function openForm(){
+    modal.style.display="block";
+}
 
-function saveData() {
+// Đóng form
 
+function closeForm(){
+    modal.style.display="none";
+    borrowForm.reset();
+    clearErrors();
+    editIndex=-1;
+}
+
+// Lưu LocalStorage
+
+function saveData(){
     localStorage.setItem(
         "borrows",
         JSON.stringify(borrows)
     );
-
 }
 
-// =====================================
-// MỞ FORM
-// =====================================
+// Hiển thị bảng
 
-function openForm() {
+function render(){
 
-    document
-        .getElementById("borrowModal")
-        .style.display = "block";
+    borrowTable.innerHTML =
+    borrows.map((b,i)=>`
 
+    <tr>
+        <td>${i+1}</td>
+        <td>${b.borrowId}</td>
+        <td>${b.borrowerName}</td>
+        <td>${b.bookId}</td>
+        <td>${b.category}</td>
+        <td>${b.borrowDate}</td>
+        <td>${b.returnDate}</td>
+        <td>${b.status}</td>
+
+        <td>
+
+            <button
+            class="btn-edit"
+            onclick="editBorrow(${i})">
+            Sửa
+            </button>
+
+            <button
+            class="btn-delete"
+            onclick="deleteBorrow(${i})">
+            Xóa
+            </button>
+
+        </td>
+
+    </tr>
+
+    `).join("");
 }
 
-// =====================================
-// ĐÓNG FORM
-// =====================================
+// Thống kê
 
-function closeForm() {
+function updateStats(){
 
+    total.innerText =
+    borrows.length;
+
+    borrowing.innerText =
+    borrows.filter(
+        b=>b.status==="Đang mượn"
+    ).length;
+
+    returned.innerText =
+    borrows.filter(
+        b=>b.status==="Đã trả"
+    ).length;
+}
+
+// Hiện lỗi
+
+function error(id,msg){
+    document.getElementById(id).innerText=msg;
+}
+
+// Xóa lỗi
+
+function clearErrors(){
     document
-        .getElementById("borrowModal")
-        .style.display = "none";
+    .querySelectorAll(".error")
+    .forEach(e=>e.innerText="");
+}
 
-    document
-        .getElementById("borrowForm")
-        .reset();
+// Validate
+
+function validate(){
 
     clearErrors();
 
-    editIndex = -1;
+    let ok=true;
 
-}
+    let id=borrowId.value.trim();
+    let name=borrowerName.value.trim();
+    let book=bookId.value.trim();
+    let noteText=note.value.trim();
 
-// =====================================
-// HIỂN THỊ BẢNG
-// =====================================
+    if(!/^PM-\d{4}$/.test(id)){
+        error("borrowIdError","PM-XXXX");
+        ok=false;
+    }
 
-function renderTable() {
-
-    let table =
-        document.getElementById(
-            "borrowTable"
-        );
-
-    table.innerHTML = "";
-
-    borrows.forEach(
-        (borrow, index) => {
-
-            table.innerHTML += `
-
-            <tr>
-
-                <td>${index + 1}</td>
-
-                <td>${borrow.borrowId}</td>
-
-                <td>${borrow.borrowerName}</td>
-
-                <td>${borrow.bookId}</td>
-
-                <td>${borrow.category}</td>
-
-                <td>${borrow.borrowDate}</td>
-
-                <td>${borrow.returnDate}</td>
-
-                <td>${borrow.status}</td>
-
-                <td>
-
-                    <button
-                        class="btn-edit"
-                        onclick="editBorrow(${index})">
-
-                        Sửa
-
-                    </button>
-
-                    <button
-                        class="btn-delete"
-                        onclick="deleteBorrow(${index})">
-
-                        Xóa
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-            `;
-        }
+    let duplicate=
+    borrows.findIndex(
+        b=>b.borrowId===id
     );
 
-}
-
-// =====================================
-// THỐNG KÊ
-// =====================================
-
-function updateStatistics() {
-
-    document.getElementById(
-        "totalBorrows"
-    ).innerText =
-        borrows.length;
-
-    document.getElementById(
-        "borrowingCount"
-    ).innerText =
-        borrows.filter(
-            borrow =>
-            borrow.status === "Đang mượn"
-        ).length;
-
-    document.getElementById(
-        "returnedCount"
-    ).innerText =
-        borrows.filter(
-            borrow =>
-            borrow.status === "Đã trả"
-        ).length;
-
-}
-
-// Phần 2
-// =====================================
-// HIỂN THỊ LỖI
-// =====================================
-
-function showError(id, message) {
-
-    document.getElementById(id).innerText =
-        message;
-
-}
-
-// =====================================
-// XÓA TOÀN BỘ LỖI
-// =====================================
-
-function clearErrors() {
-
-    document
-        .querySelectorAll(".error")
-        .forEach(error => {
-
-            error.innerText = "";
-
-        });
-
-}
-
-// =====================================
-// VALIDATE FORM
-// =====================================
-
-function validateForm() {
-
-    clearErrors();
-
-    let isValid = true;
-
-    // =====================
-    // LẤY DỮ LIỆU
-    // =====================
-
-    let borrowId =
-        document.getElementById(
-            "borrowId"
-        ).value.trim();
-
-    let borrowerName =
-        document.getElementById(
-            "borrowerName"
-        ).value.trim();
-
-    let bookId =
-        document.getElementById(
-            "bookId"
-        ).value.trim();
-
-    let category =
-        document.getElementById(
-            "category"
-        ).value;
-
-    let borrowDate =
-        document.getElementById(
-            "borrowDate"
-        ).value;
-
-    let returnDate =
-        document.getElementById(
-            "returnDate"
-        ).value;
-
-    let phone =
-        document.getElementById(
-            "phone"
-        ).value.trim();
-
-    let email =
-        document.getElementById(
-            "email"
-        ).value.trim();
-
-    let status =
-        document.getElementById(
-            "status"
-        ).value;
-
-    let note =
-        document.getElementById(
-            "note"
-        ).value.trim();
-
-    // =====================
-    // MÃ PHIẾU MƯỢN
-    // =====================
-
-    if (borrowId === "") {
-
-        showError(
-            "borrowIdError",
-            "Không được để trống"
-        );
-
-        isValid = false;
+    if(
+        duplicate!=-1 &&
+        duplicate!=editIndex
+    ){
+        error("borrowIdError","Mã bị trùng");
+        ok=false;
     }
 
-    else if (
-        !/^PM-\d{4}$/.test(borrowId)
-    ) {
-
-        showError(
-            "borrowIdError",
-            "Định dạng PM-XXXX"
-        );
-
-        isValid = false;
+    if(
+        name.length<2 ||
+        name.length>40
+    ){
+        error("borrowerNameError","2-40 ký tự");
+        ok=false;
     }
 
-    else {
-
-        let duplicate =
-            borrows.findIndex(
-                borrow =>
-                    borrow.borrowId === borrowId
-            );
-
-        if (
-            duplicate !== -1 &&
-            duplicate !== editIndex
-        ) {
-
-            showError(
-                "borrowIdError",
-                "Mã phiếu đã tồn tại"
-            );
-
-            isValid = false;
-        }
+    if(!/^BK\d{5}$/.test(book)){
+        error("bookIdError","BK12345");
+        ok=false;
     }
 
-    // =====================
-    // HỌ TÊN
-    // =====================
-
-    if (borrowerName === "") {
-
-        showError(
-            "borrowerNameError",
-            "Không được để trống"
-        );
-
-        isValid = false;
+    if(category.value===""){
+        error("categoryError","Chọn thể loại");
+        ok=false;
     }
 
-    else if (
-        borrowerName.length < 2 ||
-        borrowerName.length > 40
-    ) {
-
-        showError(
-            "borrowerNameError",
-            "Từ 2 đến 40 ký tự"
-        );
-
-        isValid = false;
-    }
-
-    else if (
-        !/^[A-Za-zÀ-ỹ\s]+$/
-        .test(borrowerName)
-    ) {
-
-        showError(
-            "borrowerNameError",
-            "Chỉ chứa chữ và khoảng trắng"
-        );
-
-        isValid = false;
-    }
-
-    // =====================
-    // MÃ SÁCH
-    // =====================
-
-    if (bookId === "") {
-
-        showError(
-            "bookIdError",
-            "Không được để trống"
-        );
-
-        isValid = false;
-    }
-
-    else if (
-        !/^BK\d{5}$/
-        .test(bookId)
-    ) {
-
-        showError(
-            "bookIdError",
-            "VD: BK10234"
-        );
-
-        isValid = false;
-    }
-
-    // =====================
-    // THỂ LOẠI
-    // =====================
-
-    if (category === "") {
-
-        showError(
-            "categoryError",
-            "Chọn thể loại"
-        );
-
-        isValid = false;
-    }
-
-    // =====================
-    // NGÀY MƯỢN
-    // =====================
-
-    let today =
-        new Date()
-        .toISOString()
-        .split("T")[0];
-
-    if (borrowDate === "") {
-
-        showError(
-            "borrowDateError",
-            "Không được để trống"
-        );
-
-        isValid = false;
-    }
-
-    else if (
-        borrowDate > today
-    ) {
-
-        showError(
-            "borrowDateError",
-            "Không được lớn hơn hôm nay"
-        );
-
-        isValid = false;
-    }
-
-    // =====================
-    // HẠN TRẢ
-    // =====================
-
-    if (returnDate === "") {
-
-        showError(
-            "returnDateError",
-            "Không được để trống"
-        );
-
-        isValid = false;
-    }
-
-    else {
-
-        let borrow =
-            new Date(borrowDate);
-
-        let returnD =
-            new Date(returnDate);
-
-        let diffDays =
-            (returnD - borrow)
-            /
-            (1000 * 60 * 60 * 24);
-
-        if (
-            returnD < borrow
-        ) {
-
-            showError(
-                "returnDateError",
-                "Phải >= ngày mượn"
-            );
-
-            isValid = false;
-        }
-
-        else if (
-            diffDays > 30
-        ) {
-
-            showError(
-                "returnDateError",
-                "Không vượt quá 30 ngày"
-            );
-
-            isValid = false;
-        }
-    }
-
-    // =====================
-    // SỐ ĐIỆN THOẠI
-    // =====================
-
-    if (phone === "") {
-
-        showError(
-            "phoneError",
-            "Không được để trống"
-        );
-
-        isValid = false;
-    }
-
-    else if (
+    if(
         !/^(03|05|07|08|09)\d{8}$/
-        .test(phone)
-    ) {
-
-        showError(
-            "phoneError",
-            "SĐT không hợp lệ"
-        );
-
-        isValid = false;
+        .test(phone.value)
+    ){
+        error("phoneError","SĐT sai");
+        ok=false;
     }
 
-    // =====================
-    // EMAIL
-    // =====================
-
-    if (email === "") {
-
-        showError(
-            "emailError",
-            "Không được để trống"
-        );
-
-        isValid = false;
-    }
-
-    else if (
+    if(
         !/^[^\s@]+@library\.vn$/
-        .test(email)
-    ) {
-
-        showError(
-            "emailError",
-            "Email phải kết thúc @library.vn"
-        );
-
-        isValid = false;
+        .test(email.value)
+    ){
+        error("emailError","@library.vn");
+        ok=false;
     }
 
-    // =====================
-    // TRẠNG THÁI
-    // =====================
-
-    if (status === "") {
-
-        showError(
-            "statusError",
-            "Chọn trạng thái"
-        );
-
-        isValid = false;
+    if(status.value===""){
+        error("statusError","Chọn trạng thái");
+        ok=false;
     }
 
-    // =====================
-    // GHI CHÚ
-    // =====================
-
-    if (
-        note.length > 120
-    ) {
-
-        showError(
-            "noteError",
-            "Tối đa 120 ký tự"
-        );
-
-        isValid = false;
+    if(noteText.length>120){
+        error("noteError","Tối đa 120 ký tự");
+        ok=false;
     }
 
-    if (
+    if(
         /<(script|iframe|img)/i
-        .test(note)
-    ) {
-
-        showError(
-            "noteError",
-            "Không được chứa thẻ HTML"
-        );
-
-        isValid = false;
+        .test(noteText)
+    ){
+        error("noteError","Không nhập HTML");
+        ok=false;
     }
 
-    return isValid;
+    let d1=new Date(borrowDate.value);
+    let d2=new Date(returnDate.value);
 
-}
+    let diff=
+    (d2-d1)/(1000*60*60*24);
 
-//Phần 3
-// =====================================
-// SUBMIT FORM
-// =====================================
-
-document
-    .getElementById("borrowForm")
-    .addEventListener(
-        "submit",
-        function (event) {
-
-            event.preventDefault();
-
-            // Validate thất bại thì dừng
-
-            if (!validateForm()) {
-
-                return;
-
-            }
-
-            // =====================
-            // TẠO OBJECT
-            // =====================
-
-            let borrow = {
-
-                borrowId:
-                    document.getElementById(
-                        "borrowId"
-                    ).value.trim(),
-
-                borrowerName:
-                    document.getElementById(
-                        "borrowerName"
-                    ).value.trim(),
-
-                bookId:
-                    document.getElementById(
-                        "bookId"
-                    ).value.trim(),
-
-                category:
-                    document.getElementById(
-                        "category"
-                    ).value,
-
-                borrowDate:
-                    document.getElementById(
-                        "borrowDate"
-                    ).value,
-
-                returnDate:
-                    document.getElementById(
-                        "returnDate"
-                    ).value,
-
-                phone:
-                    document.getElementById(
-                        "phone"
-                    ).value.trim(),
-
-                email:
-                    document.getElementById(
-                        "email"
-                    ).value.trim(),
-
-                status:
-                    document.getElementById(
-                        "status"
-                    ).value,
-
-                note:
-                    document.getElementById(
-                        "note"
-                    ).value.trim()
-
-            };
-
-            // =====================
-            // THÊM MỚI
-            // =====================
-
-            if (editIndex === -1) {
-
-                borrows.push(borrow);
-
-            }
-
-            // =====================
-            // CẬP NHẬT
-            // =====================
-
-            else {
-
-                borrows[editIndex] =
-                    borrow;
-
-            }
-
-            // =====================
-            // LƯU DỮ LIỆU
-            // =====================
-
-            saveData();
-
-            renderTable();
-
-            updateStatistics();
-
-            alert(
-                "Lưu dữ liệu thành công!"
-            );
-
-            closeForm();
-
-        }
-    );
-
-// =====================================
-// ĐỔ DỮ LIỆU LÊN FORM KHI SỬA
-// =====================================
-
-function editBorrow(index) {
-
-    editIndex = index;
-
-    let borrow =
-        borrows[index];
-
-    document.getElementById(
-        "borrowId"
-    ).value =
-        borrow.borrowId;
-
-    document.getElementById(
-        "borrowerName"
-    ).value =
-        borrow.borrowerName;
-
-    document.getElementById(
-        "bookId"
-    ).value =
-        borrow.bookId;
-
-    document.getElementById(
-        "category"
-    ).value =
-        borrow.category;
-
-    document.getElementById(
-        "borrowDate"
-    ).value =
-        borrow.borrowDate;
-
-    document.getElementById(
-        "returnDate"
-    ).value =
-        borrow.returnDate;
-
-    document.getElementById(
-        "phone"
-    ).value =
-        borrow.phone;
-
-    document.getElementById(
-        "email"
-    ).value =
-        borrow.email;
-
-    document.getElementById(
-        "status"
-    ).value =
-        borrow.status;
-
-    document.getElementById(
-        "note"
-    ).value =
-        borrow.note;
-
-    openForm();
-
-}
-
-// =====================================
-// XÓA PHIẾU MƯỢN
-// =====================================
-
-function deleteBorrow(index) {
-
-    let confirmDelete =
-        confirm(
-            "Bạn có chắc chắn muốn xóa phiếu mượn này không?"
+    if(d2<d1){
+        error(
+            "returnDateError",
+            "Hạn trả >= ngày mượn"
         );
-
-    if (!confirmDelete) {
-
-        return;
-
+        ok=false;
     }
 
-    borrows.splice(index, 1);
+    if(diff>30){
+        error(
+            "returnDateError",
+            "Không quá 30 ngày"
+        );
+        ok=false;
+    }
+
+    return ok;
+}
+
+// Submit
+
+borrowForm.onsubmit=function(e){
+
+    e.preventDefault();
+
+    if(!validate()) return;
+
+    let borrow={
+
+        borrowId:borrowId.value,
+        borrowerName:borrowerName.value,
+        bookId:bookId.value,
+        category:category.value,
+        borrowDate:borrowDate.value,
+        returnDate:returnDate.value,
+        phone:phone.value,
+        email:email.value,
+        status:status.value,
+        note:note.value
+
+    };
+
+    if(editIndex==-1){
+
+        borrows.push(borrow);
+
+    }else{
+
+        borrows[editIndex]=borrow;
+
+    }
 
     saveData();
 
-    renderTable();
+    render();
 
-    updateStatistics();
+    updateStats();
 
-    alert(
-        "Xóa thành công!"
-    );
+    closeForm();
+};
 
+// Sửa
+
+function editBorrow(i){
+
+    editIndex=i;
+
+    let b=borrows[i];
+
+    borrowId.value=b.borrowId;
+    borrowerName.value=b.borrowerName;
+    bookId.value=b.bookId;
+    category.value=b.category;
+    borrowDate.value=b.borrowDate;
+    returnDate.value=b.returnDate;
+    phone.value=b.phone;
+    email.value=b.email;
+    status.value=b.status;
+    note.value=b.note;
+
+    openForm();
 }
 
-// =====================================
-// CLICK RA NGOÀI MODAL ĐỂ ĐÓNG
-// =====================================
+// Xóa
 
-window.onclick =
-    function (event) {
+function deleteBorrow(i){
 
-        let modal =
-            document.getElementById(
-                "borrowModal"
-            );
+    if(
+        confirm(
+            "Bạn có chắc muốn xóa?"
+        )
+    ){
 
-        if (
-            event.target === modal
-        ) {
+        borrows.splice(i,1);
 
-            closeForm();
+        saveData();
 
-        }
+        render();
 
-    };
+        updateStats();
+    }
+}
+
+// Click nền để đóng
+
+window.onclick=function(e){
+
+    if(e.target==modal){
+
+        closeForm();
+
+    }
+}
